@@ -1,0 +1,216 @@
+History & Changelog
+===================
+
+Version 3.3
+ - added:    brute force scanning for JPEG images, 3GP/MP4 videos
+             and zip archives
+ - added:    option to enable drag&drop (disabled by default)
+ - improved: option to recalculate UTC times enabled by default and applied
+             also on predefsent messages
+ - improved: phone number to contact name matching for messages
+ - improved: minor improvement in symbian message parsing
+ - changed:  log verbosity decreased for messages
+ - fixed:    "Illegal characters in path" error during file deduplication
+ - fixed:    bug in parsing nbf & zip files
+
+Version 3.2
+ - added:    joining of multipart messages (from binary and predef storage)
+ - added:    merging of multiple backup files (ability to open more files at once)
+ - added:    option to recalculate VMG timestamps from UTC to local time
+ - improved: parsing robustness fixes
+ - improved: detection of duplicate messages is more efficient
+
+Version 3.1
+ - added:    parsing of contacts and messages from nfb & nfc backups
+ - added:    option to export only selected messages
+ - fixed:    xml encoding during export of messages for android
+ - fixed:    ignoring of predefmessages as message source
+
+Version 3.0
+ - added:    dbshell integration for parsing contacts and other info from symbian databases
+ - added:    preferences allowing selection of message sources (VMG, predefmessages,
+             symbian message storage)
+ - added:    new export format "SMS Backup & Restore" for messages, which allows
+             android users to migrate their messages from nokia backups easily
+ - improved: advanced options for installer
+ - fixed:    parsing robustness fixes
+
+Version 2.6
+ - added:    extract files by drag & drop (for example on desktop)
+ - added:    applying found phonebook entries on messages found in nbf backups
+ - added:    extracted *.mms files can be opened individually
+ - fixed:    fixes in mms parsing
+ - added:    first version distibuted with installer (later)
+
+Version 2.5
+ - added:    new folder structure type (using zip compression) parsing,
+             this structure can be found in backups from new models
+ - fixed:    time of sent messages from "predefmessages" storage
+
+Version 2.4
+ - added:    new backup format (nbf) support. Actually nbf is nothing more than
+             plain zip archive, so as a side effect, support for zip files has
+             been added too. You can use NbuExplorer as "unzip with preview"
+             tool now if you like
+ - added:    new message format decoding (storage which is typically under
+             "predefmessages" system folder). This format decoding is used
+             for preview purposes but also for load of Messages tab content
+             during nbf backup format parsing
+ - added:    author email link added to About application dialog
+
+Version 2.3
+ - fixed:    group parsing
+ - added:    experimental (not perfect, but somehow working) parsing of messages
+             from symbian message storage
+
+Version 2.2
+ - fixed:    vcard parser improved
+ - fixed:    minor binary calendar parsinf fix
+ - improved: older phone models ARC format support added
+
+Version 2.1
+ - fixed:    continue after error during file extraction
+ - fixed:    fixes in parsing of compressed fragments (file coverage increased,
+             out of memory error prevention)
+ - fixed:    continue parsing after parse error in vcard section
+ - fixed:    vcard sections (contacts, calendar, bookmarks) parsing rearranged
+             to support subfolders (N8 calendar issue)
+ - fixed:    binary encoded SMS parsing improved (number format type detection)
+
+Version 2.0
+ - added:    "messages" tab for user friendly message browsing
+             and exporting to txt, csv or xml
+ - improved: date and time parsing for incoming MMS messages
+ - fixed:    fixes in parsing of compressed fragments
+
+Version 1.19
+ - added:    parsing of binary SMS from newly discovered section of NBU format!
+ - added:    parsing of base64 encoded photos from vcard contacts
+ - added:    parsing date and time from contact vcard if present (REV)
+ - improved: first file autoselect after folder selection
+ - improved: vcf and vcs text preview (QUOTED-PRINTABLE text decoding)
+ - fixed:    parsing of groups from 6230
+
+Version 1.18
+ - fixed:    minor fix in binary "todo" items parsing
+ - fixed:    VCARD parser fix - line break in quoted encoding probably can
+             contain spaces
+ - improved: internal code changes
+ - improved: new (unknown so far) nbu section skipping
+ - improved: filetype icon retreiving function made more resistant
+ - added:    message text preview for items under private\1000484b\Mail2 folder
+ 
+Version 1.17
+ - improved: working with uncompressed file sizes
+ - improved: arc format parsing adapted for partial backups (Bookmarks.arc,
+             Calendar.arc, Contacts.arc, Messages.arc, UserFiles.arc)
+ - improved: filtering of duplicated files
+
+Version 1.16
+ - added:    status bar with file and filesize counter
+ - added:    option to save parsing log into text file
+ - improved: parsing of compressed fragments
+
+Version 1.15
+ - added:    experimental parsing of compressed fragments in nbu and arc backup
+             formats, more files from symbian phones backups can be exported
+             now
+
+Version 1.14
+ - added:    experimental *.arc backup format (phone side created) support,
+             only first part (proably with user data) decoded (10-30% file
+             coverage with available samples achieved)
+
+Version 1.13
+
+ - no functional change, only some internal code refactoring before publication
+   of source code, because this is first version with full public access to the
+   source code via SVN repository at sourceforge
+ - readme.txt with short description, license.txt with GNU GPL license v3
+   and this changelog.txt added to official distribution
+
+Version 1.12
+
+ - fixed:    4GB nbu backup file limit removed
+ - improved: minor improvements in MMS parser
+ - improved: minor improvements in vcard parser
+ - added:    another S60 folder structure type (0x1008) parsing
+ - added:    compressed S60 folder structure type (0x1002, 0x1004 and 0x1006)
+             parsing with output only to decompressed fragments (still not
+             ordered to final file structure, but closer...)
+
+Version 1.11
+
+ - changed:  project name changed from "Nokia NbuExplorer" just to "NbuExplorer"
+ - improved: mono compatibility (conditional usage of function that prevented
+             application to run under mono on linux), tested on Ubuntu 9.10
+             after installing winforms2.0 extension (can be done with command
+             "sudo apt-get install libmono-winforms2.0-cil"). Thanks to
+             Ricardo Pereira 
+ - improved: changes in files datetime parsing - it should not throw
+             "Not a valid Win32 FileTime" exception now
+
+Version 1.10
+
+ - added:    more folder structure types parsing
+ - added:    secondary calendar structure parsing (output only to the log)
+ - added:    scan progress reporting and other parse log improvements
+ - added:    information about backup date and time
+ - added:    auto bruteforce mode option on unknown structure detection
+ - added:    analyze request on unknown structure detection 
+ - improved: GUI response during parsing/scan
+
+Version 1.9
+
+ - added:    "bruteforce scan" mode (available as filter in file open dialog)
+             this mode will not find more files and works slower, but can help
+             to recover contacts, messages, calendar and bookmarks when classic
+             parsing method fails, it could also work with damaged backup files
+             or different types of files containing phone data in form of vcards
+             (for example communication center cache files such as
+             PCCSContact.db, PCCSSMS.db etc.)
+
+Version 1.8
+
+ - added:    mms header and content parsing
+ - added:    parsing of more nbu sections (file coverage increased - for
+             example important C:\System\Data\Contacts.cdb file is now
+             recognized in backups from symbian phones)
+ - added:    contact and groups multimedia files extraction (images, ringtones)
+ - added:    drag drop of backup files onto main form is now supported
+ - improved: internal code reorganisation and minor fixes
+ - improved: all system sections output (Message2, Settings2 etc.) moved under
+             Settings folder
+ - improved: case insensitive folders processing when costructing folder tree
+ - fixed:    preview and export of files with invalid chars in filename
+
+Version 1.7
+
+ - added:    date/time parsing (files, calendar, messages)
+ - added:    sorting files by date/time
+ - added:    exporting files with parsed date/time
+ - added:    calendar subdirectories for different item types (APPOINTMENT,
+             TODO...)
+ - added:    sender/receiver contact name added to vmg (messages) filenames
+ - improved: vcard (contacts, calendar items, messages) parser
+
+Version 1.6
+
+ - added:    "Yes to all" & "No to all" option in overwrite confirm dialog
+ - fixed:    renaming of duplicate filenames (counter)
+ - fixed:    main form controls (menu) are disabled during export operation
+
+Version 1.5
+
+ - fix in skipping of section "Bookmarks2"
+ - added support for new section type (N86 Files)
+ - added file coverage counter to end of log
+ - fixed support for nfb & nfc (5100, 6610)
+ - added parsing of filenames in nfb & nfc
+
+Version 1.4
+
+ - optimized preview of large text files
+ - experimental support for older backup formats (nfb & nfc)
+
+Version 1.0 to 1.3 - no changelog

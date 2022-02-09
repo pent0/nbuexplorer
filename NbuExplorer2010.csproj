@@ -75,7 +75,6 @@
     <Compile Include="cdbParsing\DbShell.cs" />
     <Compile Include="DataSetNbuExplorer.cs">
       <DependentUpon>DataSetNbuExplorer.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="DataSetNbuExplorer.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -309,10 +308,12 @@
     <Content Include="readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="FORMAT.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>Subwcrev "$(ProjectDir)\" "$(ProjectDir)Properties\AssemblyInfo_template.cs" "$(ProjectDir)Properties\AssemblyInfo.cs" -f</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

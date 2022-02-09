@@ -1,0 +1,93 @@
+﻿Format and read sequence of the Backup Engine code released under EPL 1.0 with Nokia N8 OSS.
+I extracted it here for convenience. The viewer does not need all info.
+
+Since the format is pretty complicated and the engine is written in a complicated way for asynchronous operations to work efficiently. They document the format data also in each index file.
+Things to remember first is every structure that can be serailized will start with stream version (usually 1) and then come spares
+
+- 1st step: Read header
+
+    HEADER:
+
+    12 bytes = 3 uids
+    4 bytes = 1 uid crc checksum
+
+    ARCHIVE FILE FORMAT VERSION
+    {
+       1 byte  = version major
+       1 byte  = version minor
+        2 bytes = version build
+    }
+ 
+    4 bytes = size of footer in bytes - this is always the same
+            fixed length, hence we can write the size here. 
+            The value can then be used to work from the back of the
+            archive to the starting position of the footer (where
+            most of the juicy info is).
+
+    4 bytes = archive flags
+
+    4 bytes = archive payload CRC (activated when RD_FILE_MANAGER_BACKUP)
+ 
+    4 bytes = archive category
+ 
+    4 bytes = archive header CRC (activated when RD_FILE_MANAGER_BACKUP)
+ 
+    KMMCScSpareByteCount (20) bytes = spare padding
+
+    1 byte = phone model version string length
+    n bytes = phone model version string
+
+- 2nd step: Read footer. The footer will describe archive index data. There are only 6 one, some archives may have it or not.
+
+    Indicies are:
+    
+    EMMCScBkupOwnerDataTypeDataOwner
+    EMMCScBkupOwnerDataTypeJavaData
+    EMMCScBkupOwnerDataTypePublicData
+    EMMCScBkupOwnerDataTypeSystemData
+    EMMCScBkupOwnerDataTypeActiveData
+    EMMCScBkupOwnerDataTypePassiveData
+    
+     6 (index objects) *
+     ( 1 byte for object type + TMMCScBkupArchiveVector::ExternalizedSize() )
+    
+
+    THIS IS THE SIZE OF AN INDIVIDUAL "INDEX RECORD POINTER"
+    const TInt indexDataSize = 1 index type
+        + TMMCScBkupArchiveVector::ExternalizedSize() vector
+        + 4 spare1
+        + 4 spare2
+        ;
+
+    THIS IS THE TOTAL SIZE OF ALL "INDEX RECORD POINTERS"
+    const TInt sizeOfAllIndicies = 
+          4 stream format version
+        + 4 spare1
+        + 4 spare2
+        + 4 spare3
+        + 4 spare4
+        + 4 index object count
+        + ( EMMCScBkupOwnerDataTypeCount * indexDataSize);
+
+    WE ALSO WRITE THE AMOUNT OF DISK SPACE REQUIRED FOR EACH DRIVE
+    IN ORDER TO RESTORE THE ARCHIVE
+
+- 3rd step: Read drive info description
+    
+    Data container collection size = 
+        4 bytes stream format version
+        + 12 bytes spare
+        + sizeof(CMMCScBkupDriveSizer)
+
+    CMMCScBkupDriveSizer size = 
+        4 bytes stream format version
+        + 8 bytes spare
+        + 1 byte count (n)
+        + n * sizeof(TMMCScBkupDriveAndSize)
+
+    TMMCScBkupDriveAndSize size = 
+        4 bytes stream format version
+        + 8 bytes spare
+        + 1 byte drive number (0 - 26 can be mapped to A to Z)
+        + 4 bytes size (the engine still does not support 64-bit size yet)
+

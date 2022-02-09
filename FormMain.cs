@@ -286,7 +286,7 @@ namespace NbuExplorer
 
 				try
 				{
-					if (treeViewDirs.SelectedNode.Parent.Parent.Text.StartsWith("Mail"))
+					if ((treeViewDirs.SelectedNode.Parent != null) && (treeViewDirs.SelectedNode.Parent.Parent != null) && (treeViewDirs.SelectedNode.Parent.Parent.Text.StartsWith("Mail")))
 					{
 						try
 						{

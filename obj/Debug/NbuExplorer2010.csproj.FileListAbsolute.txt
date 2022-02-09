@@ -1,0 +1,14 @@
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer2010.csproj.AssemblyReference.cache
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.AboutBox.resources
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.FormMain.resources
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.MessageBoxWithMemory.resources
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.Properties.Resources.resources
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer2010.csproj.GenerateResource.cache
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer2010.csproj.CoreCompileInputs.cache
+G:\bent\nbuexplorer\bin\Debug\changelog.txt
+G:\bent\nbuexplorer\bin\Debug\readme.txt
+G:\bent\nbuexplorer\bin\Debug\license.rtf
+G:\bent\nbuexplorer\bin\Debug\NbuExplorer.exe
+G:\bent\nbuexplorer\bin\Debug\NbuExplorer.pdb
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.exe
+G:\bent\nbuexplorer\obj\Debug\NbuExplorer.pdb

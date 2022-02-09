@@ -199,20 +199,45 @@ namespace NbuExplorer
 		{
 			List<byte> termList = new List<byte>(termination);
 			StringBuilder sb = new StringBuilder();
-			while (true)
+
+			// Read length
+			int len = 0;
+			int b1 = s.ReadByte();
+
+			if ((b1 & 1) == 0)
+            {
+				len = b1 >> 1;
+            } else
+            {
+				if ((b1 & 2) == 0)
+                {
+					len = b1;
+					b1 = s.ReadByte();
+
+					len += b1 << 8;
+					len >>= 2;
+                } else
+                {
+					// 3 bytes length
+					len = b1;
+					UInt16 rest2Bytes = ReadUInt16(s);
+
+					len += (rest2Bytes << 8);
+					len >>= 4;
+                }
+            }
+
+			len /= 2;
+
+			for (int i = 0; i < len; i++)
 			{
 				int b = s.ReadByte();
 				if (b == -1) throw new EndOfStreamException();
-				else if (termList.Contains((byte)b))
-				{
-					Counter += sb.Length;
-					return sb.ToString();
-				}
-				else
-				{
-					sb.Append((char)b);
-				}
+				sb.Append((char)b);
 			}
+
+			Counter += len;
+			return sb.ToString();
 		}
 
 		public static byte[] ReadBuff(Stream s, int length)
