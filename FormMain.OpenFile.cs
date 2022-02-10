@@ -575,7 +575,7 @@ namespace NbuExplorer
                             }
 
 							sectionOffset[archiveType] = offset;
-							sectionSize[archiveType] = offset;
+							sectionSize[archiveType] = length;
 
 							StreamUtils.ReadUInt32(fs);
 							StreamUtils.ReadUInt32(fs);
@@ -589,7 +589,7 @@ namespace NbuExplorer
 						long lenUncomp;
 
 						// Public data files unpacking
-						fs.Seek(sectionOffset[], SeekOrigin.Begin);
+						fs.Seek(sectionOffset[2], SeekOrigin.Begin);
 						UInt32 fileCount = StreamUtils.ReadUInt32(fs);
 
 						string filename = "";
@@ -643,40 +643,75 @@ namespace NbuExplorer
 
 						addLine(""); // end of first section
 
+						fs.Seek(sectionOffset[0] + 16, SeekOrigin.Begin);
 
-						// System data file unpacking. Passive is the same
-						// Skip stream format version + 12 bytes spare
-						fs.Seek(sectionOffset[3] + 16, SeekOrigin.Begin);
-						fileCount = StreamUtils.ReadUInt32(fs);
+						UInt32 packageCount = StreamUtils.ReadUInt32(fs);
+						for (UInt32 i = 0; i < packageCount; i++) {
+							fs.Seek(4, SeekOrigin.Current);
 
-						for (UInt32 i = 0; i < fileCount; i++)
-                        {
-							// Skip stream format version + 12 bytes spares again
-							// Another structure!
+							UInt32 offset = StreamUtils.ReadUInt32(fs);
+							UInt32 size = StreamUtils.ReadUInt32(fs);
+							long lastPos = fs.Position;
+
+							fs.Seek(offset, SeekOrigin.Begin);
+
 							fs.Seek(16, SeekOrigin.Current);
+							UInt32 secureId = StreamUtils.ReadUInt32(fs);
 
-							UInt32 packageId = StreamUtils.ReadUInt32(fs);
-							UInt32 packageDataCount = StreamUtils.ReadUInt32(fs);
+							fs.Seek(12, SeekOrigin.Current);
+							int countDTSizer = fs.ReadByte();
 
-							for (UInt32 j = 0; j < packageDataCount; j++)
-							{
-								// Skip stream format version + 12 bytes spares again
-								// Another structure!
-								fs.Seek(16, SeekOrigin.Current);
+							StreamUtils.Counter++;
 
-								int drive = fs.ReadByte();
-								StreamUtils.Counter++;
+							for (int j = 0; j < countDTSizer; j++)
+                            {
+								fs.Seek(12, SeekOrigin.Current);
+								int dataType = fs.ReadByte();
+								int countSizer = fs.ReadByte();
+								StreamUtils.Counter += 2;
 
-								// Skip stream version
-								fs.Seek(4, SeekOrigin.Current);
+								if (countSizer == 1)
+                                {
+									int a = 5;
+                                }
 
-								UInt32 packOffset = StreamUtils.ReadUInt32(fs);
-								UInt32 packSize = StreamUtils.ReadUInt32(fs);
+								for (int k = 0; k < countSizer; k++)
+                                {
+									fs.Seek(12, SeekOrigin.Current);
+									int driveNumber = fs.ReadByte();
+									UInt32 sizeDrive = StreamUtils.ReadUInt32(fs);
 
-								// Skip two spares
-								fs.Seek(8, SeekOrigin.Current);
-                            }
-                        }
+									addLine("Drive " + (char)('A' + driveNumber) + " has " + sizeDrive + " bytes from package (data type " + dataType + "): " + secureId.ToString("X"));
+								}
+							}
+
+							addLine("Offset " + offset.ToString() + " size of registeration " + size.ToString() + " package name " + secureId.ToString("X"));
+
+							fs.Seek(lastPos + 16, SeekOrigin.Begin);
+						}
+
+						// System data file unpacking
+						// Come right off to the system data, skip 20 bytes stream version + spares
+						fs.Seek(sectionOffset[3] + sectionSize[3] + 20, SeekOrigin.Begin);
+
+						// Check is encrypted. Encrypt header: 4 bytes is encrypted, buffer size, total size
+						UInt32 isEncrypted = StreamUtils.ReadUInt32(fs);
+						if (isEncrypted != 0)
+                        {
+							addLine("Fragment " + fs.Position.ToString() + " is encrypted!");
+                        } else
+                        {
+							fs.Seek(8, SeekOrigin.Current);
+
+							lenComp = StreamUtils.ReadUInt32(fs);
+							lenUncomp = StreamUtils.ReadUInt32(fs);
+
+							FileinfoCf fi = new FileinfoCf(currentFileName, numToAddr(fs.Position), fs.Position, lenComp, lenUncomp, DateTime.MinValue);
+							compFr.Add(fi);
+
+							addLine(fi.Filename + " - compressed fragment");
+							parseCompressedFragment("", fi, lenUncomp);
+						}
 
 						byte[] seq = new byte[] { 0, 0, 0, 1, 0, 0, 0, 0 };
 						byte[] buff = new byte[8];
