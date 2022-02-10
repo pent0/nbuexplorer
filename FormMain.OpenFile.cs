@@ -557,8 +557,8 @@ namespace NbuExplorer
 						UInt32 archiveIndexCount = StreamUtils.ReadUInt32(fs);
 
 						// Only care about this for now
-						UInt32 publicDataFileOffset = 0;
-						UInt32 publicDataFileSize = 0;
+						UInt32[] sectionOffset = new UInt32[6];
+						UInt32[] sectionSize = new UInt32[6];
 
 						for (UInt32 i = 0; i < archiveIndexCount; i++)
                         {
@@ -568,12 +568,14 @@ namespace NbuExplorer
 							UInt32 offset = StreamUtils.ReadUInt32(fs);
 							UInt32 length = StreamUtils.ReadUInt32(fs);
 
-							if (archiveType == 2)
+							if (archiveType > 6)
                             {
-								// Public data files
-								publicDataFileOffset = offset;
-								publicDataFileSize = length;
+								MessageBox.Show("The backup archive is corrupted! (An archive with index greater than 6 exists)");
+								return;
                             }
+
+							sectionOffset[archiveType] = offset;
+							sectionSize[archiveType] = offset;
 
 							StreamUtils.ReadUInt32(fs);
 							StreamUtils.ReadUInt32(fs);
@@ -586,7 +588,8 @@ namespace NbuExplorer
 						long lenComp;
 						long lenUncomp;
 
-						fs.Seek(publicDataFileOffset, SeekOrigin.Begin);
+						// Public data files unpacking
+						fs.Seek(sectionOffset[], SeekOrigin.Begin);
 						UInt32 fileCount = StreamUtils.ReadUInt32(fs);
 
 						string filename = "";
@@ -639,6 +642,41 @@ namespace NbuExplorer
 						}
 
 						addLine(""); // end of first section
+
+
+						// System data file unpacking. Passive is the same
+						// Skip stream format version + 12 bytes spare
+						fs.Seek(sectionOffset[3] + 16, SeekOrigin.Begin);
+						fileCount = StreamUtils.ReadUInt32(fs);
+
+						for (UInt32 i = 0; i < fileCount; i++)
+                        {
+							// Skip stream format version + 12 bytes spares again
+							// Another structure!
+							fs.Seek(16, SeekOrigin.Current);
+
+							UInt32 packageId = StreamUtils.ReadUInt32(fs);
+							UInt32 packageDataCount = StreamUtils.ReadUInt32(fs);
+
+							for (UInt32 j = 0; j < packageDataCount; j++)
+							{
+								// Skip stream format version + 12 bytes spares again
+								// Another structure!
+								fs.Seek(16, SeekOrigin.Current);
+
+								int drive = fs.ReadByte();
+								StreamUtils.Counter++;
+
+								// Skip stream version
+								fs.Seek(4, SeekOrigin.Current);
+
+								UInt32 packOffset = StreamUtils.ReadUInt32(fs);
+								UInt32 packSize = StreamUtils.ReadUInt32(fs);
+
+								// Skip two spares
+								fs.Seek(8, SeekOrigin.Current);
+                            }
+                        }
 
 						byte[] seq = new byte[] { 0, 0, 0, 1, 0, 0, 0, 0 };
 						byte[] buff = new byte[8];
